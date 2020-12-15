@@ -19,7 +19,7 @@ def load_constraint(fname: str = "constraints.yml"):
 
 def check_nonnegative_int(varname, val):
     if not isinstance(val, int):
-        err_msg = "%s should be int type."%(varname)
+        err_msg = "%s should be int type, not %s."%(varname, type(val))
         write_log(err_msg)
         raise ValueError(err_msg)
         
@@ -30,7 +30,7 @@ def check_nonnegative_int(varname, val):
 
 def check_nonnegative_float(varname, val):
     if not isinstance(val, float) and not isinstance(val, int):
-        err_msg = "%s should be float type."%(varname)
+        err_msg = "%s should be float type, not %s."%(varname, type(val))
         write_log(err_msg)
         raise ValueError(err_msg)
         

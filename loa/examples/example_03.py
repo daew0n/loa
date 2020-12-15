@@ -1,3 +1,4 @@
+import time
 from loa.unit import Unit
 from loa.team import Team
 from loa.team import TeamExaminer
@@ -76,19 +77,24 @@ if __name__ == "__main__":
                 fpath="test.log",
                 mode='w')
     
-    simulator = BasicSimulator()
+    simulator = BasicSimulator("ROUND-02")
     team1 = MyTeam1("Team#1")
     team2 = MyTeam2("Team#2")
     print(team1)
     print()
     print(team2)
+    print()
   
     examiner = TeamExaminer()
     examiner.check(team1, "ROUND-02")
     examiner.check(team2, "ROUND-02")    
 
     judge = EachTurnMaxSurvivalJudge()
-    n_team1, n_team2, n_draws = simulator.play(team1, team2, 20, 10, judge)
+    t_beg = time.perf_counter()    
+    n_team1, n_team2, n_draws = simulator.play(team1, team2, 40, 10, judge)
+    t_end = time.perf_counter()
+    t_elapsed = t_end - t_beg
+    
     print("Number of Team1 wins:", n_team1)
     print("Number of Team2 wins:", n_team2)
     print("Number of draws:", n_draws)
@@ -101,5 +107,7 @@ if __name__ == "__main__":
     else:
         print("Two teams draw...")
 
+    print()
+    print("Duration of a single game: %f (sec.)"%(t_elapsed))
     finish_logging()
         

@@ -74,7 +74,7 @@ if __name__ == "__main__":
                 fpath="test.log",
                 mode='w')
     
-    simulator = EvasionSimulator()
+    simulator = EvasionSimulator("ROUND-01")
     team1 = MyTeam1("Team#1")
     team2 = MyTeam2("Team#2")
     print(team1)

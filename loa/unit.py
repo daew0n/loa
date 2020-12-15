@@ -175,3 +175,21 @@ class Unit:
         self.att = obj.att
         self.arm = obj.arm
         self.evs = obj.evs
+
+    def copy(self, team=None):
+        cls = self.__class__
+        if not team:
+            team = self.team
+
+        obj = cls(team, self.name, self.pos)
+        obj.hp = self.hp
+        obj.att = self.att
+        obj.arm = self.arm
+        obj.evs = self.evs
+        
+        obj.__class__.HP = cls.HP
+        obj.__class__.ATT = cls.ATT
+        obj.__class__.ARM = cls.ARM
+        obj.__class__.EVS = cls.EVS
+        
+        return obj

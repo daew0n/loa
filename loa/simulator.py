@@ -43,21 +43,30 @@ class Simulator:
         num_wins_team2 = 0
         num_draws = 0
         
-        for i in range(num_repeats):            
+        for r in range(num_repeats):
+                        
+            #team1_cpy = team1.copy()  #copy.deepcopy(team1)
+            #team2_cpy = team2.copy()  #copy.deepcopy(team2)
+            
             team1_cpy = copy.deepcopy(team1)
             team2_cpy = copy.deepcopy(team2)
-            if i % 2 == 0:
+
+            self._initialize_repeat(r, team1_cpy, team2_cpy)            
+            
+            if r % 2 == 0:
                 offense, defense = team1_cpy, team2_cpy
             else:
                 offense, defense = team2_cpy, team1_cpy
                 
             judge.initialize()
             for t in range(num_turns):
+                
                 write_log("[%s vs %s - Repeat #%d Turn #%d]"%(team1.name,
                                                               team2.name,
-                                                              i+1,
+                                                              r+1,
                                                               t+1))
                 
+                self._initialize_turn(t, offense, defense)
                 self._examiner.check_play(offense,
                                           defense,
                                           self._league_round)
@@ -94,8 +103,19 @@ class Simulator:
         # end of for
         
         return num_wins_team1, num_wins_team2, num_draws
-     
-      
+    
+    def _initialize_repeat(self,
+                           r: int,
+                           team1: Team,
+                           team2: Team):
+        pass
+    
+    def _initialize_turn(self,
+                         t: int,
+                         offense: Team,
+                         defense: Team):
+        pass
+    
     def _apply_attack(self, offense: Team, defense: Team):
         raise NotImplementedError()
         
@@ -158,3 +178,63 @@ class EvasionSimulator(Simulator):
             return True
             
         return False       
+    
+class ArrangeOnlySimulator(Simulator):
+    
+    def __init__(self, league_round=None):
+        
+        super().__init__(league_round)
+        
+        from loa.predefined import balance
+        from loa.predefined import bomb
+        from loa.predefined import cards
+        from loa.predefined import chessmen
+        from loa.predefined import forest
+        from loa.predefined import lol         
+        
+        self._teams = []
+        self._teams.append(balance.get_team())
+        self._teams.append(bomb.get_team())
+        self._teams.append(cards.get_team())
+        self._teams.append(chessmen.get_team())
+        self._teams.append(forest.get_team())
+        self._teams.append(lol.get_team())
+        self._teams.append(balance.get_team())
+        self._teams.append(bomb.get_team())
+        self._teams.append(cards.get_team())
+        self._teams.append(chessmen.get_team())
+        self._teams.append(forest.get_team())
+        self._teams.append(lol.get_team())
+        
+    def _initialize_repeat(self,
+                           r: int,
+                           team1: Team,
+                           team2: Team):
+        
+        team1.units.clear()
+        team2.units.clear()
+        
+        for unit in self._teams[r]:
+            team1_unit = unit.copy(team1)
+            team1.units.append(team1_unit)
+            
+            team2_unit = unit.copy(team2)
+            team2.units.append(team2_unit)
+    
+    
+    def _apply_attack(self, offense: Team, defense: Team):
+        for i, unit in enumerate(offense):            
+            target = defense[i]
+            if unit and target:
+                unit_cpy = copy.deepcopy(unit)
+                target_cpy = copy.deepcopy(defense[i])
+                unit.attack(target)
+
+                # Check consistency                
+                utils.attack(unit_cpy, target_cpy, Unit)
+                if unit_cpy != unit:
+                    err_msg = "%s.attack() performs "\
+                              "illegal behaviors!"%(unit.__class__)
+                    write_log(err_msg)
+                    raise RuntimeError(err_msg)
+# end of class               
