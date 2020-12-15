@@ -95,8 +95,7 @@ class Team:
         pass
 
     def arrange(self, enemy: Team):
-        raise NotImplementedError()
-        # Implement your arrangement strategy at each turn.
+        pass
               
         
 class TeamExaminer:
