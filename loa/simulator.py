@@ -34,25 +34,23 @@ class Simulator:
         if not judge:
             judge = MaxSurvivalJudge()
 
-        if len(team1) != len(team2):
-            err_msg = "The sizes of team1 and team2 dost not match!"
-            write_log(err_msg)
-            raise ValueError(err_msg)
         
         num_wins_team1 = 0
         num_wins_team2 = 0
         num_draws = 0
         
         for r in range(num_repeats):
-                        
-            #team1_cpy = team1.copy()  #copy.deepcopy(team1)
-            #team2_cpy = team2.copy()  #copy.deepcopy(team2)
             
             team1_cpy = copy.deepcopy(team1)
             team2_cpy = copy.deepcopy(team2)
 
             self._initialize_repeat(r, team1_cpy, team2_cpy)            
             
+            if len(team1_cpy) != len(team2_cpy):
+                err_msg = "The sizes of team1 and team2 dost not match!"
+                write_log(err_msg)
+                raise ValueError(err_msg)
+
             if r % 2 == 0:
                 offense, defense = team1_cpy, team2_cpy
             else:
