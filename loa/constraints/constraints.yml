@@ -21,3 +21,23 @@ ROUND-03:
   TEAM:
     UNIT_MAX_EVS: 0
     ARRANGE_TIME_LIMIT: 0.05
+    
+    
+ROUND-04:
+  TEAM:
+    NUM_UNITS: 10    
+    SUM_HP_ATT_ARM_EVS: 1000
+    
+    UNIT_MIN_ATT: 5
+    UNIT_MAX_ATT: 40
+    
+    UNIT_MIN_ARM: 0    
+    UNIT_MAX_ARM: 20
+    
+    UNIT_MIN_HP: 5
+    UNIT_MAX_HP: 100
+    
+    UNIT_MIN_EVS: 0
+    UNIT_MAX_EVS: 10 
+    
+    ARRANGE_TIME_LIMIT: 0.05

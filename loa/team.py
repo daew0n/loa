@@ -381,12 +381,120 @@ class TeamExaminer:
                               "not %.2f!"%(unit.name, unit.evs)
                     write_log(err_msg)
                     raise ValueError(err_msg)
-                # end of if                
+                # end of if    
+                
+        elif league_round == "ROUND-04":
+            
+            CONS_TEAM = constraints[league_round]['TEAM']
+            CONS_NUM_UNITS = CONS_TEAM['NUM_UNITS']
+            CONS_SUM_HP_ATT_ARM_EVS = CONS_TEAM['SUM_HP_ATT_ARM_EVS']
+            
+            CONS_UNIT_MIN_HP = CONS_TEAM['UNIT_MIN_HP']
+            CONS_UNIT_MAX_HP = CONS_TEAM['UNIT_MAX_HP']
+            
+            CONS_UNIT_MIN_ATT = CONS_TEAM['UNIT_MIN_ATT']
+            CONS_UNIT_MAX_ATT = CONS_TEAM['UNIT_MAX_ATT']
+            
+            CONS_UNIT_MIN_ARM = CONS_TEAM['UNIT_MIN_ARM']
+            CONS_UNIT_MAX_ARM = CONS_TEAM['UNIT_MAX_ARM']
+            
+            CONS_UNIT_MIN_EVS = CONS_TEAM['UNIT_MIN_EVS']
+            CONS_UNIT_MAX_EVS = CONS_TEAM['UNIT_MAX_EVS']
+                        
+            
+            if len(team) != CONS_NUM_UNITS:
+                err_msg = "[%s] The number of units should be" \
+                          " %d, not %d"%(team.name, CONS_NUM_UNITS, len(team))
+                write_log(err_msg)
+                raise ValueError(err_msg)
+            
+            sum_hp_att_arm_evs = 0      
+            for unit in team:
+                self._check_cons_range(unit.name,
+                                       "hp",
+                                       unit.hp,
+                                       CONS_UNIT_MIN_HP,
+                                       CONS_UNIT_MAX_HP)
+                
+                self._check_cons_range(unit.name,
+                                       "att",
+                                       unit.att,
+                                       CONS_UNIT_MIN_ATT,
+                                       CONS_UNIT_MAX_ATT)
+                
+                self._check_cons_range(unit.name,
+                                       "arm",
+                                       unit.arm,
+                                       CONS_UNIT_MIN_ARM,
+                                       CONS_UNIT_MAX_ARM)
+                
+                self._check_cons_range(unit.name,
+                                       "evs",
+                                       unit.evs,
+                                       CONS_UNIT_MIN_EVS,
+                                       CONS_UNIT_MAX_EVS)
+                
+                sum_2att_3arm_4evs = 2*unit.att + 3*unit.arm + 4*unit.evs
+                if sum_2att_3arm_4evs > unit.hp:
+                    err_msg = "[%s] The summation of 2*ATT, 3*ARM and " \
+                              "4*EVS of each unit (%.4f) " \
+                              "should be less than or equal to " \
+                              "hp (%.4f)!"% \
+                              (
+                                  team.name,
+                                  sum_2att_3arm_4evs,
+                                  unit.hp                                  
+                              )
+                    write_log(err_msg)
+                    raise ValueError(err_msg)
+
+                # end of if
+                sum_hp_att_arm_evs += sum((unit.hp,
+                                           unit.att,
+                                           unit.att,
+                                           unit.evs))
+            # end of for
+
+            if round(sum_hp_att_arm_evs, 8)  > CONS_SUM_HP_ATT_ARM_EVS:
+                err_msg = "[%s] The summation of HP, ATT, ARM and EVS " \
+                          "of all units in a team should be less than " \
+                          "or equal to %.4f, not %.4f!"% \
+                          (
+                              team.name,
+                              CONS_SUM_HP_ATT_ARM_EVS,
+                              sum_hp_att_arm_evs
+                          )
+                write_log(err_msg)
+                raise ValueError(err_msg)
+                
+                
         else:
             err_msg = "league_round=%s is not defined!"%(league_round)
             write_log(err_msg)
             raise ValueError(err_msg)
-                
+    
+    
+    def _check_cons_range(self,
+                          unit_name,
+                          attr_name,
+                          attr_val,
+                          min_attr,
+                          max_attr):
+        
+        if (attr_val < min_attr) or (max_attr < attr_val):
+            err_msg = "[%s] The %s of each unit should be " \
+                      "within [%.2f, %.2f], not %.2f!"% \
+                      (
+                          unit_name,
+                          attr_name,
+                          min_attr,
+                          max_attr,
+                          attr_val
+                      )
+            write_log(err_msg)
+            raise ValueError(err_msg)
+            
+            
     def _get_time_limit(self, league_round=None):
         if not league_round:
             league_round = "ROUND-01"
@@ -400,6 +508,7 @@ class TeamExaminer:
                 return CONS_TEAM['ARRANGE_TIME_LIMIT']
         # end of if
         return 10000
+
             
     def _check_arrange(self,
                        offense: Team,
