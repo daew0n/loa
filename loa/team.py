@@ -451,7 +451,7 @@ class TeamExaminer:
                 # end of if
                 sum_hp_att_arm_evs += sum((unit.hp,
                                            unit.att,
-                                           unit.att,
+                                           unit.arm,
                                            unit.evs))
             # end of for
 
